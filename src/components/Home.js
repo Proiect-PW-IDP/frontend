@@ -5,22 +5,13 @@ import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
 
 
-const Home = ({setIsLogged}) => {
+const Home = () => {
     const navigate = useNavigate();
 
     return (
         <div>
             <h1>Home</h1>
 
-            <button
-                onClick={() => {
-                    Cookies.remove("logged");
-                    setIsLogged(false);
-                    navigate("/");
-                }}
-            >
-                Logout
-            </button>
         </div>
     );
 };
