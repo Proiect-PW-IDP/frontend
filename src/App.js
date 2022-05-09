@@ -9,6 +9,9 @@ import Cookies from "js-cookie";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import Welcome from "./components/Welcome";
 import Navbar from './components/Navbar';
+import AllOffers from './components/AllOffers';
+import OfferPage from './components/OfferPage';
+import Category from './components/Category';
 
 function App() {
   const [isLogged, setIsLogged] = useState(Cookies.get("logged"));
@@ -22,6 +25,13 @@ function App() {
                   <Route element={<ProtectedRoutes isLogged={isLogged}/>}>
                       <Route path="/home" element={<Home setIsLogged={setIsLogged}/>} />
                   </Route>
+                  <Route path="/category" element={<Category />} />
+                  <Route path="/required/category" element={<Category />} />
+                  <Route path="/required/:categoryName" element={<AllOffers />} />
+                  <Route path="/required/:categoryName/:requiredId" element={<OfferPage />}/>
+                  <Route path="/provided/category" element={<Category />} />
+                  <Route path="/provided/:categoryName" element={<AllOffers />} />
+                  <Route path="/provided/:categoryName/:requiredId" element={<OfferPage />}/>
                   <Route path="*" element={<PageNotFound />} />
               </Routes>
           </Router>
