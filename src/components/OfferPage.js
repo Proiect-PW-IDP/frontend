@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 const OfferPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { offerType, category, offer } = location.state;
+    const { myOffer, offerType, category, offer } = location.state;
     const [user, setUser] = useState({});
 
     useEffect(() => {
@@ -27,6 +27,7 @@ const OfferPage = () => {
                     <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{offer.title}</h1>
                     <div class="flex mb-4">
                     </div>
+                    <p class="leading-relaxed"><span class="text-gray-900 font-medium">Type:</span> {offer.provided ? "Provided" : "Required"}</p>
                     <p class="leading-relaxed"><span class="text-gray-900 font-medium">Details:</span> {offer.details}</p>
                     <div class="flex-1 mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                         <h2 class="text-gray-900 text-xl title-font font-medium mb-1">Contact</h2>
@@ -37,7 +38,7 @@ const OfferPage = () => {
                     </div>
                     <div class="flex">
                     <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-                        {offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it"}
+                        {myOffer ? "Edit" : offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it"}
                     </button>
                     </div>
                 </div>

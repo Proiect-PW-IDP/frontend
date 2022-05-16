@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import AllOffers from './components/AllOffers';
 import OfferPage from './components/OfferPage';
 import Category from './components/Category';
+import MyOffers from './components/MyOffers';
 
 function App() {
   const [isLogged, setIsLogged] = useState(Cookies.get("logged"));
@@ -31,7 +32,9 @@ function App() {
                   <Route path="/required/:categoryName/:requiredId" element={<OfferPage />}/>
                   <Route path="/provided/category" element={<Category />} />
                   <Route path="/provided/:categoryName" element={<AllOffers />} />
-                  <Route path="/provided/:categoryName/:requiredId" element={<OfferPage />}/>
+                  <Route path="/provided/:categoryName/:providedId" element={<OfferPage />}/>
+                  <Route path="/myOffers" element={<MyOffers />}/>
+                  <Route path="/myOffers/:myOfferId" element={<OfferPage />}/>
                   <Route path="*" element={<PageNotFound />} />
               </Routes>
           </Router>
