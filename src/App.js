@@ -13,11 +13,55 @@ import AllOffers from './components/AllOffers';
 import OfferPage from './components/OfferPage';
 import Category from './components/Category';
 import MyOffers from './components/MyOffers';
+import { useAuth0 } from "@auth0/auth0-react";
 
 function App() {
   const [isLogged, setIsLogged] = useState(Cookies.get("logged"));
+    const {
+        isLoading,
+        error,
+        isAuthenticated,
+        user,
+        getAccessTokenSilently,
+        loginWithRedirect,
+        logout,
+    } = useAuth0();
+    const [accessToken, setAccessToken] = useState(null);
 
-  return (
+    useEffect(() => {
+        const getAccessToken = async () => {
+            try {
+                const accessToken = await getAccessTokenSilently({
+                    audience: "http://my-api.com",
+                    scope: "read:users",
+                });
+                setAccessToken(accessToken);
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+        getAccessToken();
+    }, [getAccessTokenSilently]);
+
+    const securedAPITest = () => {
+        fetch("http://localhost:8081/auth0/private", {
+            method: "GET",
+            headers: new Headers({
+                Authorization: "Bearer " + accessToken,
+                "Content-Type": "application/json",
+            }),
+        })
+            .then(function (res) {
+                return res.json();
+            })
+            .then(function (resJson) {
+                console.log(resJson)
+                console.log(user)
+            })
+            .catch((e) => console.log(e));
+    };
+    securedAPITest();
+    return (
       <div>
           <Router>
               <Navbar />

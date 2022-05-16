@@ -13,12 +13,14 @@ import {
 const Category = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    console.log(location);
+
     const { offerType } = location.state;
 
     const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/category/all").then( (response) => { 
+      Axios.get("http://localhost:8081/category/all").then( (response) => {
         console.log(response);
         setCategoryList(response.data);
       });
