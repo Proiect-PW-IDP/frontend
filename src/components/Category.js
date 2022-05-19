@@ -9,11 +9,23 @@ import {
     Route,
     Link
   } from "react-router-dom";
+  import { useAuth0 } from "@auth0/auth0-react";
+  import {Image} from 'cloudinary-react';
 
 const Category = () => {
     const navigate = useNavigate();
     const location = useLocation();
     console.log(location);
+    const {
+        isLoading,
+        error,
+        isAuthenticated,
+        user,
+        getAccessTokenSilently,
+        loginWithRedirect,
+        logout,
+    } = useAuth0();
+
 
     const { offerType } = location.state;
 
@@ -23,6 +35,11 @@ const Category = () => {
       Axios.get("http://localhost:8081/category/all").then( (response) => {
         console.log(response);
         setCategoryList(response.data);
+        console.log("User");
+        console.log(user)
+        console.log(user.email);
+        console.log("Logat");
+        console.log(isAuthenticated);
       });
     }, []);
 

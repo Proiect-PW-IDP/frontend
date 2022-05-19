@@ -9,15 +9,27 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import {Image} from 'cloudinary-react';
+import userEvent from '@testing-library/user-event';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const AllOffers = () => {
     const navigate = useNavigate();
     const [offerRequiredList, setOfferRequiredList] = useState([]);
     const location = useLocation();
     const { offerType, category } = location.state;
+    const {
+      isLoading,
+      error,
+      isAuthenticated,
+      user,
+      getAccessTokenSilently,
+      loginWithRedirect,
+      logout,
+    } = useAuth0();
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/offer/" + offerType + "/category/" + "?categoryName=" + category.name).then( (response) => { 
+      Axios.get("http://localhost:8081/offer/" + offerType + "/category/" + "?categoryName=" + category.name + "&userEmail=" + user.email).then( (response) => { 
         console.log(response);
         setOfferRequiredList(response.data);
       });
@@ -27,7 +39,10 @@ const AllOffers = () => {
         return (
           <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
               <Link to={"/" + offerType + "/" + category.name + "/" + element.id} state={{myOffer: false, offerType: offerType, category: category, offer: element}} class="block relative h-48 rounded overflow-hidden">
-                <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="https://dummyimage.com/421x261"/>
+                {element.image.localeCompare("") == 0 ?
+                  <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="https://dummyimage.com/421x261"/> :
+                  <Image class="object-cover object-center w-full h-full block" cloudName="btc-cloud" publicId={element.image}/>  
+                }
               </Link>
               <div class="mt-4">
                 <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>

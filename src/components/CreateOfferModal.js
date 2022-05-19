@@ -11,11 +11,23 @@ import {
     Route,
     Link
   } from "react-router-dom";
+  import {Image} from 'cloudinary-react';
+  import { useAuth0 } from "@auth0/auth0-react";
 
 const CreateOfferModal = ({setOpenModal}) => {
     const [title, setTitle] = useState("");
     const [details, setDetails] = useState("");
     const [categoryList, setCategoryList] = useState([]);
+    const [imageSelected, setImageSelected] = useState("");
+    const {
+      isLoading,
+      error,
+      isAuthenticated,
+      user,
+      getAccessTokenSilently,
+      loginWithRedirect,
+      logout,
+    } = useAuth0();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -47,11 +59,40 @@ const CreateOfferModal = ({setOpenModal}) => {
 
         console.log(offer);
 
-        Axios.post('http://localhost:8081/offer', offer)
-          .then( (response) => { 
-            console.log(response);
-            setOpenModal(false);
-        });
+        console.log(imageSelected);
+        const formData = new FormData();
+        formData.append("file", imageSelected);
+        formData.append("upload_preset", "rcoqg6hm");
+  
+        Axios.post("https://api.cloudinary.com/v1_1/btc-cloud/image/upload", formData)
+        .then((response) => {
+          console.log("Cloud Response")
+          console.log(response);
+          offer.image=response.data.secure_url;
+          console.log(offer);
+
+          Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, offer)
+            .then( (response) => { 
+              console.log(response);
+              setOpenModal(false);
+          });
+        })
+    }
+
+    const uploadImage = () => {
+      console.log(imageSelected);
+      const formData = new FormData();
+      formData.append("file", imageSelected);
+      formData.append("upload_preset", "rcoqg6hm");
+
+      Axios.post("https://api.cloudinary.com/v1_1/btc-cloud/image/upload", formData)
+      .then((response) => {
+        console.log("Cloud Response")
+        console.log(response);
+      })
+
+      const image = imageSelected.name.slice(0, -4);
+      console.log(image);
     }
 
      return (
@@ -85,6 +126,12 @@ const CreateOfferModal = ({setOpenModal}) => {
                             placeholder="Details"
                             value={details}
                             onChange={e => setDetails(e.target.value)} />
+            <input 
+                            type="file"
+                            accept="image/png, image/gif, image/jpeg"
+                            class="block border border-grey-light w-full p-3 rounded mb-4"
+                            placeholder="Image"
+                            onChange={(event) => {setImageSelected(event.target.files[0])}} />
             <div class="flex justify-center">
                 <div class="mb-3 xl:w-96">
                     <select id="typeSelect" class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-grey-light rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">

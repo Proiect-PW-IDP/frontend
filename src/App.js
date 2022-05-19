@@ -14,6 +14,7 @@ import OfferPage from './components/OfferPage';
 import Category from './components/Category';
 import MyOffers from './components/MyOffers';
 import { useAuth0 } from "@auth0/auth0-react";
+import Axios from 'axios';
 
 function App() {
   const [isLogged, setIsLogged] = useState(Cookies.get("logged"));
@@ -27,6 +28,17 @@ function App() {
         logout,
     } = useAuth0();
     const [accessToken, setAccessToken] = useState(null);
+
+    const createNewAccount = () => {
+        const newUser = {
+            "email": user.email,
+        };
+
+        Axios.post('http://localhost:8081/user', newUser)
+            .then( (response) => { 
+              console.log(response);
+          });
+    }
 
     useEffect(() => {
         const getAccessToken = async () => {
@@ -57,10 +69,14 @@ function App() {
             .then(function (resJson) {
                 console.log(resJson)
                 console.log(user)
+                if (isAuthenticated) {
+                    createNewAccount();
+                }
             })
             .catch((e) => console.log(e));
     };
     securedAPITest();
+    
     return (
       <div>
           <Router>
