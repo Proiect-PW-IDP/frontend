@@ -1,7 +1,7 @@
 import react from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import LogoutButton from "./LogoutButton";
 import {
@@ -11,6 +11,7 @@ import {
     Link
   } from "react-router-dom";
   import { useAuth0 } from "@auth0/auth0-react";
+  import {Image} from 'cloudinary-react';
 
 
 const Navbar = () => {
@@ -25,6 +26,12 @@ const Navbar = () => {
         logout,
     } = useAuth0();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [url, setUrl] = useState(location.pathname);
+
+    useEffect(() => {
+        setUrl(location.pathname);
+      });
 
     const handleUserMenu = () => {
         setIsUserMenuOpen(!isUserMenuOpen);
@@ -35,6 +42,9 @@ const Navbar = () => {
         navigate("/");
     }
 
+    console.log(url);
+    console.log(url.includes("/required/category"));
+
     return (
         <nav class="bg-gray-800">
             <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -42,25 +52,47 @@ const Navbar = () => {
                     <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                     
                         <div class="flex-shrink-0 flex items-center">
-                            <img class="hidden lg:block h-8 w-auto" src="https://e7.pngegg.com/pngimages/74/922/png-clipart-business-self-help-group-logo-project-business-service-people.png" alt="Workflow"/>
+                            <Image class="hidden lg:block h-8 w-auto" cloudName="btc-cloud" publicId="https://res.cloudinary.com/btc-cloud/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1653050002/savePeop_xphyyd.png"/> 
                         </div>
 
                         <div class="hidden sm:block sm:ml-6">
                             <div class="flex space-x-4">
                     
-                                <a href="/home" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                                {url.localeCompare("/") == 0 ?
+                                     <Link to={"/home"} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Home
+                                     </Link> :
+                                    <Link to={"/home"} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Home
+                                    </Link>
+                                }
 
-                                <Link to={"/required/category"} state={{offerType: "required"}} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Required
-                                </Link>
+                                {url.includes("/required/category") ?
+                                     <Link to={"/required/category"} state={{offerType: "required"}} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Required
+                                     </Link> :
+                                    <Link to={"/required/category"} state={{offerType: "required"}} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Required
+                                    </Link>
+                                }
 
-                                <Link to={"/provided/category"} state={{offerType: "provided"}} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Provided
-                                </Link>
+                                {url.includes("/provided/category") ?
+                                    <Link to={"/provided/category"} state={{offerType: "provided"}} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Provided
+                                    </Link> :
+                                    <Link to={"/provided/category"} state={{offerType: "provided"}} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        Provided
+                                    </Link>
+                                }
 
-                                <Link to={"/myOffers"} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    My Offers
-                                </Link>
+                                {url.includes("/myOffers") ?
+                                    <Link to={"/myOffers"} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        My Offers
+                                    </Link> :
+                                    <Link to={"/myOffers"} class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                        My Offers
+                                    </Link>
+                                }  
                             </div>
                         </div>
                     </div>
