@@ -14,13 +14,13 @@ import {
   import {Image} from 'cloudinary-react';
   import { useAuth0 } from "@auth0/auth0-react";
 
-const CreateOfferModal = ({setOpenModal}) => {
-    const [title, setTitle] = useState("");
-    const [details, setDetails] = useState("");
-    const [telephone, setTelephone] = useState("");
-    const [address, setAddress] = useState("");
+const EditOfferModal = ({setOpenModal, offer}) => {
+    const [title, setTitle] = useState(offer.title);
+    const [details, setDetails] = useState(offer.details);
+    const [telephone, setTelephone] = useState(offer.telephone);
+    const [address, setAddress] = useState(offer.address);
     const [categoryList, setCategoryList] = useState([]);
-    const [imageSelected, setImageSelected] = useState("");
+    const [imageSelected, setImageSelected] = useState(null);
     const {
       isLoading,
       error,
@@ -40,9 +40,19 @@ const CreateOfferModal = ({setOpenModal}) => {
     }, []);
 
     const transformCategory = (element) => {
+        if(element.name.localeCompare(offer.category) != 0) {
         return (
             <option value={element.name}>{element.name}</option>
         )
+        }
+    }
+
+    const handleDeleteOffer = () => {
+        Axios.delete("http://localhost:8081/offer?offerId=" + offer.id).then( (response) => { 
+          console.log(response);
+          setOpenModal(false);
+          navigate("/myOffers");
+        });
     }
 
     const handleCreateOffer = (event) => {
@@ -51,7 +61,8 @@ const CreateOfferModal = ({setOpenModal}) => {
         var categorySelect = document.getElementById("categorySelect");
         var typeSelect = document.getElementById("typeSelect");
 
-        const offer = {
+        const editedOffer = {
+            "id": offer.id,
             "userId": 1,
             "title": title,
             "details": details,
@@ -61,26 +72,35 @@ const CreateOfferModal = ({setOpenModal}) => {
             "provided": typeSelect.options[typeSelect.selectedIndex].value
         };
 
-        console.log(offer);
+        console.log(editedOffer);
 
         console.log(imageSelected);
-        const formData = new FormData();
-        formData.append("file", imageSelected);
-        formData.append("upload_preset", "rcoqg6hm");
-  
-        Axios.post("https://api.cloudinary.com/v1_1/btc-cloud/image/upload", formData)
-        .then((response) => {
-          console.log("Cloud Response")
-          console.log(response);
-          offer.image=response.data.secure_url;
-          console.log(offer);
+        if (imageSelected != null) {
+          const formData = new FormData();
+          formData.append("file", imageSelected);
+          formData.append("upload_preset", "rcoqg6hm");
+    
+          Axios.post("https://api.cloudinary.com/v1_1/btc-cloud/image/upload", formData)
+          .then((response) => {
+            console.log("Cloud Response")
+            console.log(response);
+            editedOffer.image=response.data.secure_url;
+            console.log(editedOffer);
 
-          Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, offer)
-            .then( (response) => { 
-              console.log(response);
-              setOpenModal(false);
-          });
-        })
+            Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, editedOffer)
+              .then( (response) => { 
+                console.log(response);
+                setOpenModal(false);
+            });
+          })
+        } else {
+          editedOffer.image = offer.image;
+          Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, editedOffer)
+              .then( (response) => { 
+                console.log(response);
+                setOpenModal(false);
+            });
+        }
     }
 
     const uploadImage = () => {
@@ -113,7 +133,7 @@ const CreateOfferModal = ({setOpenModal}) => {
           </button>
         </div>
         <div className="inline-block text-center my-5 text-3xl">
-          <h1>Do You Want to Create an Offer?</h1>
+          <h1>Do You Want to Edit This Offer?</h1>
         </div>
         <div className="bg-white px-6 py-8 text-black w-full">
             <input 
@@ -154,14 +174,17 @@ const CreateOfferModal = ({setOpenModal}) => {
             <div class="flex justify-center">
                 <div class="mb-3 xl:w-96">
                     <select id="typeSelect" class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-grey-light rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
-                        <option value="false">Required</option>
-                        <option value="true">Provided</option>
+                        <option value={offer.provided}>{offer.provided ? "Provided" : "Required"}</option>
+                        <option value={!offer.provided}>{offer.provided ? "Required" : "Provided"}</option>
                     </select>
                 </div>
             </div>
             <div class="flex justify-center">
                 <div class="mb-3 xl:w-96">
                     <select id="categorySelect" class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-grey-light rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label="Default select example">
+                       <option value={offer.category}>
+                        {offer.category}
+                      </option>
                         {categoryList.map(element => {
                             return transformCategory(element)
                         })}
@@ -170,14 +193,12 @@ const CreateOfferModal = ({setOpenModal}) => {
             </div>
         </div>
         <div className="flex justify-center items-center">
-        <button onClick={handleCreateOffer} className='w-40 h-12 m-2 text-white rounded-lg text-xl cursor-pointer border-none bg-blue-700'>Create</button>
+        <button onClick={handleCreateOffer} className='w-40 h-12 m-2 text-white rounded-lg text-xl cursor-pointer border-none bg-blue-700'>Edit</button>
           <button
-            onClick={() => {
-              setOpenModal(false);
-            }}
+            onClick={handleDeleteOffer}
             className="w-40 h-12 m-2 text-white rounded-lg text-xl cursor-pointer border-none bg-red-500"
           >
-            Cancel
+            Delete
           </button>
         </div>
       </div>
@@ -185,4 +206,4 @@ const CreateOfferModal = ({setOpenModal}) => {
     );
 }
 
-export default CreateOfferModal;
+export default EditOfferModal;
