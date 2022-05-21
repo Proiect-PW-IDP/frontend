@@ -43,7 +43,6 @@ const Navbar = () => {
     }
 
     console.log(url);
-    console.log(url.includes("/required/category"));
 
     return (
         <nav class="bg-gray-800">
@@ -67,7 +66,7 @@ const Navbar = () => {
                                     </Link>
                                 }
 
-                                {url.includes("/required/category") ?
+                                {url.includes("/required") ?
                                      <Link to={"/required/category"} state={{offerType: "required"}} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
                                         Required
                                      </Link> :
@@ -76,7 +75,7 @@ const Navbar = () => {
                                     </Link>
                                 }
 
-                                {url.includes("/provided/category") ?
+                                {url.includes("/provided") ?
                                     <Link to={"/provided/category"} state={{offerType: "provided"}} class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
                                         Provided
                                     </Link> :
