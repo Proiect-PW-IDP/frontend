@@ -5,49 +5,64 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {Image} from 'cloudinary-react';
 import { useAuth0 } from "@auth0/auth0-react";
+import EditOfferModal from './EditOfferModal';
 
 const OfferPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [modalOpen, setModalOpen] = useState(false);
     const { myOffer, offerType, category, offer } = location.state;
-    const [user, setUser] = useState({});
-
-    useEffect(() => {
-        Axios.get("http://localhost:8081/user?userId=" + offer.userId).then( (response) => { 
+    const {
+        isLoading,
+        error,
+        isAuthenticated,
+        user,
+        getAccessTokenSilently,
+        loginWithRedirect,
+        logout,
+      } = useAuth0();
+      const [currentOffer, setCurrentOffer] = useState(offer);
+    
+      useEffect(() => {
+        Axios.get("http://localhost:8081/offer/?offerId=" + offer.id).then( (response) => { 
           console.log(response);
-          setUser(response.data);
+          setCurrentOffer(response.data)
         });
-      }, []);
+      }, [modalOpen]);
+  
 
     return (
         <section class="text-gray-600 body-font overflow-hidden">
             <div class="container px-5 py-24 mx-auto">
                 <div class="lg:w-4/5 mx-auto flex flex-wrap">
-                {offer.image.localeCompare("") == 0 ?
+                {!modalOpen && (currentOffer.image.localeCompare("") == 0 ?
                   <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src="https://dummyimage.com/400x400"/> :
-                  <Image class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" cloudName="btc-cloud" publicId={offer.image}/>  
+                  <Image style={{width: 400, height: 400}} class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" cloudName="btc-cloud" publicId={currentOffer.image}/>)  
                 }
-                <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-                    <h2 class="text-sm title-font text-gray-900 font-medium tracking-widest">{offer.category}</h2>
-                    <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{offer.title}</h1>
+                {!modalOpen && <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+                    <h2 class="text-sm title-font text-gray-900 font-medium tracking-widest">{currentOffer.category}</h2>
+                    <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{currentOffer.title}</h1>
                     <div class="flex mb-4">
                     </div>
-                    <p class="leading-relaxed"><span class="text-gray-900 font-medium">Type:</span> {offer.provided ? "Provided" : "Required"}</p>
-                    <p class="leading-relaxed"><span class="text-gray-900 font-medium">Details:</span> {offer.details}</p>
+                    <p class="leading-relaxed"><span class="text-gray-900 font-medium">Type:</span> {currentOffer.provided ? "Provided" : "Required"}</p>
+                    <p class="leading-relaxed"><span class="text-gray-900 font-medium">Details:</span> {currentOffer.details}</p>
                     <div class="flex-1 mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                         <h2 class="text-gray-900 text-xl title-font font-medium mb-1">Contact</h2>
-                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Username:</span> {user.username}</p>
-                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Name:</span> {user.name}</p>
                         <p class="leading-relaxed"><span class="text-gray-900 font-medium">Email:</span> {user.email}</p>
-                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Telephone:</span> {user.telephone}</p>
+                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Telephone:</span> {currentOffer.telephone}</p>
+                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Address:</span> {currentOffer.address}</p>
                     </div>
                     <div class="flex">
-                    <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+                    <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                    onClick={() => {
+                        if(myOffer) {setModalOpen(true);}
+                      }}>
                         {myOffer ? "Edit" : offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it"}
                     </button>
                     </div>
+                </div>}
                 </div>
-                </div>
+                {modalOpen && <EditOfferModal setOpenModal={setModalOpen} offer={currentOffer}/>}
             </div>
         </section>
     )

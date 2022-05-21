@@ -41,7 +41,7 @@ const AllOffers = () => {
               <Link to={"/" + offerType + "/" + category.name + "/" + element.id} state={{myOffer: false, offerType: offerType, category: category, offer: element}} class="block relative h-48 rounded overflow-hidden">
                 {element.image.localeCompare("") == 0 ?
                   <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="https://dummyimage.com/421x261"/> :
-                  <Image class="object-cover object-center w-full h-full block" cloudName="btc-cloud" publicId={element.image}/>  
+                  <Image style={{width: 421, height: 261}} class="object-cover object-center w-full h-full block" cloudName="btc-cloud" publicId={element.image}/>  
                 }
               </Link>
               <div class="mt-4">
