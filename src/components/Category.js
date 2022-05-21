@@ -11,11 +11,13 @@ import {
   } from "react-router-dom";
   import { useAuth0 } from "@auth0/auth0-react";
   import {Image} from 'cloudinary-react';
+  import CreateCategoryModal from './CreateCategoryModal';
 
 const Category = () => {
     const navigate = useNavigate();
     const location = useLocation();
     console.log(location);
+    const [modalOpen, setModalOpen] = useState(false);
     const {
         isLoading,
         error,
@@ -41,13 +43,16 @@ const Category = () => {
         console.log("Logat");
         console.log(isAuthenticated);
       });
-    }, []);
+    }, [modalOpen]);
 
     const transformCategory = (element) => {
         return (
             <div class="p-4 md:w-1/3">
             <div class="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-            <img class="lg:h-48 md:h-36 w-full object-cover object-center" src="https://dummyimage.com/721x401" alt="blog"/>
+            {element.image.localeCompare("") == 0 ?
+                  <img alt="ecommerce" class="lg:h-48 md:h-36 w-full object-cover object-center" src="https://dummyimage.com/721x401"/> :
+                  <Image class="lg:h-48 md:h-36 w-full object-cover object-center" cloudName="btc-cloud" publicId={element.image}/>  
+            }
             <div class="p-6">
                 <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">CATEGORY</h2>
                 <h1 class="title-font text-lg font-medium text-gray-900 mb-3">{element.name}</h1>
@@ -70,14 +75,23 @@ const Category = () => {
     return (
         <section class="text-gray-600 body-font">
             <div class="container px-5 py-24 mx-auto">
-            <h1 class="title-font text-2xl font-medium text-gray-900 mb-5 ml-1">
-            {offerType.localeCompare("required") == 0 ? "Required categories" : "Provided categories    "}
-            </h1>
-                <div class="flex flex-wrap -m-4">
+            <div class="flex">
+                <h1 class="title-font flex-1 text-2xl font-medium text-gray-900 mb-5 ml-1">
+                {offerType.localeCompare("required") == 0 ? "Required categories" : "Provided categories    "}
+                </h1>
+                {(!modalOpen && (user.email.localeCompare("eu@yahoo.com") == 0)) && <button onClick={() => {
+                    setModalOpen(true);
+                    }} class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-5" type="button" data-modal-toggle="defaultModal">
+                    Create category
+                </button>}
+            </div>
+            {modalOpen && <CreateCategoryModal setOpenModal={setModalOpen}/>}
+             {!modalOpen && <div class="flex flex-wrap -m-4">
                 {categoryList.map(element => {
                     return transformCategory(element)
                  })}
                 </div>
+            }
             </div>
         </section>
     );
