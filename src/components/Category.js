@@ -37,6 +37,8 @@ const Category = () => {
 
     const [selectedCategory, setSelectedCategory] = useState("");
 
+    const [isAdmin, setIsAdmin] = useState(false);
+
     useEffect(() => {
       Axios.get("http://localhost:8081/category/all").then( (response) => {
         console.log(response);
@@ -47,6 +49,17 @@ const Category = () => {
         console.log("Logat");
         console.log(isAuthenticated);
       });
+
+      if (user["http://my-api.com/roles"].length !=0 ) {
+        if (user["http://my-api.com/roles"][0].localeCompare("app admin") == 0) {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+      } else {
+          setIsAdmin(false);
+      }
+
     }, [modalOpen, editModalOpen]);
 
     const transformCategory = (element) => {
@@ -70,7 +83,7 @@ const Category = () => {
                     </svg>
                 </Link>
                 </div>
-                {(!modalOpen && !editModalOpen && (user.email.localeCompare("eu@yahoo.com") == 0)) && <button onClick={() => {
+                {(!modalOpen && !editModalOpen && isAdmin) && <button onClick={() => {
                     setSelectedCategory(element);
                     setEditModalOpen(true);
                     }} class="block text-white bg-blue-700 mt-5 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-5" type="button" data-modal-toggle="defaultModal">
@@ -89,7 +102,7 @@ const Category = () => {
                 <h1 class="title-font flex-1 text-2xl font-medium text-gray-900 mb-5 ml-1">
                 {offerType.localeCompare("required") == 0 ? "Required categories" : "Provided categories    "}
                 </h1>
-                {(!modalOpen && !editModalOpen && (user.email.localeCompare("eu@yahoo.com") == 0)) && <button onClick={() => {
+                {(!modalOpen && !editModalOpen && isAdmin) && <button onClick={() => {
                     setModalOpen(true);
                     }} class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mb-5" type="button" data-modal-toggle="defaultModal">
                     Create category

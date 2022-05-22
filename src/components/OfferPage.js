@@ -22,14 +22,36 @@ const OfferPage = () => {
         logout,
       } = useAuth0();
       const [currentOffer, setCurrentOffer] = useState(offer);
+      const [offerUser, setOfferUser] = useState("");
     
       useEffect(() => {
         Axios.get("http://localhost:8081/offer/?offerId=" + offer.id).then( (response) => { 
           console.log(response);
           setCurrentOffer(response.data)
         });
+
+        Axios.get("http://localhost:8081/user/?userId=" + offer.userId).then( (response) => { 
+          console.log(response);
+          setOfferUser(response.data)
+        });
       }, [modalOpen]);
   
+
+      const handleSendNotification = () => {
+        const notification = {
+            "senderEmail": user.email,
+            "userOfferEmail": offerUser.email,
+            "message": offer.title + " from " + offer.category + " " + (offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it")
+        };
+
+      console.log(notification);
+
+      Axios.post('http://localhost:8081/offer/provided/category/sender', notification)
+        .then( (response) => { 
+          console.log(response);
+      });
+  
+    }
 
     return (
         <section class="text-gray-600 body-font overflow-hidden">
@@ -48,14 +70,16 @@ const OfferPage = () => {
                     <p class="leading-relaxed"><span class="text-gray-900 font-medium">Details:</span> {currentOffer.details}</p>
                     <div class="flex-1 mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                         <h2 class="text-gray-900 text-xl title-font font-medium mb-1">Contact</h2>
-                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Email:</span> {user.email}</p>
+                        <p class="leading-relaxed"><span class="text-gray-900 font-medium">Email:</span> {offerUser.email}</p>
                         <p class="leading-relaxed"><span class="text-gray-900 font-medium">Telephone:</span> {currentOffer.telephone}</p>
                         <p class="leading-relaxed"><span class="text-gray-900 font-medium">Address:</span> {currentOffer.address}</p>
                     </div>
                     <div class="flex">
                     <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
                     onClick={() => {
-                        if(myOffer) {setModalOpen(true);}
+                        if(myOffer) {setModalOpen(true);} else {
+                          handleSendNotification();
+                        }
                       }}>
                         {myOffer ? "Edit" : offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it"}
                     </button>
