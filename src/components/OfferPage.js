@@ -23,6 +23,8 @@ const OfferPage = () => {
       } = useAuth0();
       const [currentOffer, setCurrentOffer] = useState(offer);
       const [offerUser, setOfferUser] = useState("");
+      const [currentUser, setCurrentUser] = useState("");
+      const [isInterested, setIsInterested] = useState(false);
     
       useEffect(() => {
         Axios.get("http://localhost:8081/offer/?offerId=" + offer.id).then( (response) => { 
@@ -33,6 +35,21 @@ const OfferPage = () => {
         Axios.get("http://localhost:8081/user/?userId=" + offer.userId).then( (response) => { 
           console.log(response);
           setOfferUser(response.data)
+        });
+
+        Axios.get("http://localhost:8081/user/email?email=" + user.email).then( (response) => { 
+          console.log(response);
+          setCurrentUser(response.data)
+        });
+
+        Axios.get("http://localhost:8081/interest/email?userEmail=" + user.email + "&offerId=" + offer.id).then( (response) => { 
+          console.log(response);
+          if (response.data.localeCompare("") != 0) {
+            setIsInterested(true);
+          } else {
+            setIsInterested(false);
+          }
+          console.log(isInterested);
         });
       }, [modalOpen]);
   
@@ -45,11 +62,26 @@ const OfferPage = () => {
         };
 
       console.log(notification);
+      
 
       Axios.post('http://localhost:8081/offer/provided/category/sender', notification)
         .then( (response) => { 
           console.log(response);
       });
+
+      const interest = {
+        "userId": currentUser.id,
+        "offerId": offer.id
+    };
+
+  console.log(notification);
+  
+
+  Axios.post('http://localhost:8081/interest', interest)
+    .then( (response) => { 
+      console.log(response);
+      setIsInterested(true);
+  });      
   
     }
 
@@ -84,6 +116,7 @@ const OfferPage = () => {
                         {myOffer ? "Edit" : offerType.localeCompare("required") == 0 ? "I can provide it" : "I need it"}
                     </button>
                     </div>
+                    {isInterested && <h2 class="text-sm title-font text-gray-900 font-medium tracking-widest">You are interested</h2>}
                 </div>}
                 </div>
                 {modalOpen && <EditOfferModal setOpenModal={setModalOpen} offer={currentOffer}/>}
