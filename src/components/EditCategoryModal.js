@@ -30,7 +30,7 @@ const EditCategoryModal = ({setEditOpenModal, category}) => {
     const navigate = useNavigate();
 
     const handleDeleteCategory = () => {
-        Axios.delete("http://localhost:8081/category?categoryId=" + category.id).then( (response) => { 
+        Axios.delete("http://localhost:8000/category?categoryId=" + category.id).then( (response) => { 
           console.log(response);
           setEditOpenModal(false);
         });
@@ -60,7 +60,7 @@ const EditCategoryModal = ({setEditOpenModal, category}) => {
             editedCategory.image=response.data.secure_url;
             console.log(editedCategory);
 
-            Axios.post('http://localhost:8081/category', editedCategory)
+            Axios.post('http://localhost:8000/category', editedCategory)
               .then( (response) => { 
                 console.log(response);
                 setEditOpenModal(false);
@@ -68,7 +68,7 @@ const EditCategoryModal = ({setEditOpenModal, category}) => {
           })
         } else {
           editedCategory.image = category.image;
-          Axios.post('http://localhost:8081/category', editedCategory)
+          Axios.post('http://localhost:8000/category', editedCategory)
               .then( (response) => { 
                 console.log(response);
                 setEditOpenModal(false);

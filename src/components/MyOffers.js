@@ -28,7 +28,7 @@ const MyOffers = () => {
     } = useAuth0();
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/offer/all/myOffers/?userEmail=" + user.email).then( (response) => { 
+      Axios.get("http://localhost:8000/offer/all/myOffers/?userEmail=" + user.email).then( (response) => { 
         console.log(response);
         setOfferRequiredList(response.data);
       });

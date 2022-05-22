@@ -33,7 +33,7 @@ const CreateOfferModal = ({setOpenModal}) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/category/all").then( (response) => { 
+      Axios.get("http://localhost:8000/category/all").then( (response) => { 
         console.log(response);
         setCategoryList(response.data);
       });
@@ -75,7 +75,7 @@ const CreateOfferModal = ({setOpenModal}) => {
           offer.image=response.data.secure_url;
           console.log(offer);
 
-          Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, offer)
+          Axios.post('http://localhost:8000/offer/email?userEmail=' + user.email, offer)
             .then( (response) => { 
               console.log(response);
               setOpenModal(false);

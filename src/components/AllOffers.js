@@ -29,7 +29,7 @@ const AllOffers = () => {
     } = useAuth0();
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/offer/" + offerType + "/category/" + "?categoryName=" + category.name + "&userEmail=" + user.email).then( (response) => { 
+      Axios.get("http://localhost:8000/offer/" + offerType + "/category/" + "?categoryName=" + category.name + "&userEmail=" + user.email).then( (response) => { 
         console.log(response);
         setOfferRequiredList(response.data);
       });

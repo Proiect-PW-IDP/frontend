@@ -40,7 +40,7 @@ const Category = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/category/all").then( (response) => {
+      Axios.get("http://localhost:8000/category/all").then( (response) => {
         console.log(response);
         setCategoryList(response.data);
         console.log("User");
