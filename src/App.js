@@ -34,7 +34,7 @@ function App() {
             "email": user.email,
         };
 
-        Axios.post('http://localhost:8081/user', newUser)
+        Axios.post('http://localhost:8000/user', newUser)
             .then( (response) => { 
               console.log(response);
           });
@@ -56,7 +56,7 @@ function App() {
     }, [getAccessTokenSilently]);
 
     const securedAPITest = () => {
-        fetch("http://localhost:8081/auth0/private", {
+        fetch("http://localhost:8000/auth0/private", {
             method: "GET",
             headers: new Headers({
                 Authorization: "Bearer " + accessToken,

@@ -33,7 +33,7 @@ const EditOfferModal = ({setOpenModal, offer}) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      Axios.get("http://localhost:8081/category/all").then( (response) => { 
+      Axios.get("http://localhost:8000/category/all").then( (response) => { 
         console.log(response);
         setCategoryList(response.data);
       });
@@ -48,7 +48,7 @@ const EditOfferModal = ({setOpenModal, offer}) => {
     }
 
     const handleDeleteOffer = () => {
-        Axios.delete("http://localhost:8081/offer?offerId=" + offer.id).then( (response) => { 
+        Axios.delete("http://localhost:8000/offer?offerId=" + offer.id).then( (response) => { 
           console.log(response);
           setOpenModal(false);
           navigate("/myOffers");
@@ -87,7 +87,7 @@ const EditOfferModal = ({setOpenModal, offer}) => {
             editedOffer.image=response.data.secure_url;
             console.log(editedOffer);
 
-            Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, editedOffer)
+            Axios.post('http://localhost:8000/offer/email?userEmail=' + user.email, editedOffer)
               .then( (response) => { 
                 console.log(response);
                 setOpenModal(false);
@@ -95,7 +95,7 @@ const EditOfferModal = ({setOpenModal, offer}) => {
           })
         } else {
           editedOffer.image = offer.image;
-          Axios.post('http://localhost:8081/offer/email?userEmail=' + user.email, editedOffer)
+          Axios.post('http://localhost:8000/offer/email?userEmail=' + user.email, editedOffer)
               .then( (response) => { 
                 console.log(response);
                 setOpenModal(false);

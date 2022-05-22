@@ -27,22 +27,22 @@ const OfferPage = () => {
       const [isInterested, setIsInterested] = useState(false);
     
       useEffect(() => {
-        Axios.get("http://localhost:8081/offer/?offerId=" + offer.id).then( (response) => { 
+        Axios.get("http://localhost:8000/offer/?offerId=" + offer.id).then( (response) => { 
           console.log(response);
           setCurrentOffer(response.data)
         });
 
-        Axios.get("http://localhost:8081/user/?userId=" + offer.userId).then( (response) => { 
+        Axios.get("http://localhost:8000/user/?userId=" + offer.userId).then( (response) => { 
           console.log(response);
           setOfferUser(response.data)
         });
 
-        Axios.get("http://localhost:8081/user/email?email=" + user.email).then( (response) => { 
+        Axios.get("http://localhost:8000/user/email?email=" + user.email).then( (response) => { 
           console.log(response);
           setCurrentUser(response.data)
         });
 
-        Axios.get("http://localhost:8081/interest/email?userEmail=" + user.email + "&offerId=" + offer.id).then( (response) => { 
+        Axios.get("http://localhost:8000/interest/email?userEmail=" + user.email + "&offerId=" + offer.id).then( (response) => { 
           console.log(response);
           if (response.data.localeCompare("") != 0) {
             setIsInterested(true);
@@ -64,7 +64,7 @@ const OfferPage = () => {
       console.log(notification);
       
 
-      Axios.post('http://localhost:8081/offer/provided/category/sender', notification)
+      Axios.post('http://localhost:8000/offer/provided/category/sender', notification)
         .then( (response) => { 
           console.log(response);
       });
@@ -77,7 +77,7 @@ const OfferPage = () => {
   console.log(notification);
   
 
-  Axios.post('http://localhost:8081/interest', interest)
+  Axios.post('http://localhost:8000/interest', interest)
     .then( (response) => { 
       console.log(response);
       setIsInterested(true);

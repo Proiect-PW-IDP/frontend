@@ -51,7 +51,7 @@ const CreateCategoryModal = ({setOpenModal}) => {
           category.image=response.data.secure_url;
           console.log(category);
 
-          Axios.post('http://localhost:8081/category', category)
+          Axios.post('http://localhost:8000/category', category)
             .then( (response) => { 
               console.log(response);
               setOpenModal(false);
